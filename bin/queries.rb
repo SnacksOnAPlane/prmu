@@ -1,3 +1,5 @@
+require 'pg'
+
 class Query
   attr_accessor :table
   attr_accessor :query
@@ -7,7 +9,7 @@ class Query
     self.query = build_query(params)
   end
 
-  def self.execute
+  def execute
     conn = PG.connect( dbname: 'prmu', user: 'prmu', password: 'prmu_pass' )
     conn.exec(self.query) do |result|
       puts result
@@ -16,15 +18,27 @@ class Query
 end
 
 class Insert < Query
-  def build_query(post)
-    "INSERT INTO #{ self.table } (#{ post.keys.join(',') }) " \
-    "VALUES (#{ post.values.join(',') });"
+  def build_query(object)
+    validate(object)
+    "INSERT INTO #{ self.table } (#{ object.keys.join(',') }) " \
+    "VALUES (#{ object.values.map { |val| "'#{val}'" }.join(',') });"
+  end
+
+  def validate(object)
+    object.each { |k, v| object[k] = v.to_s.gsub(/'/, "''") }
   end
 end
 
 class BulkInsert < Query
-  def build_query(posts)
-    "INSERT INTO #{ self.table } (#{ posts[0].keys.join(',') }) " \
-    "VALUES #{ posts.map { |post| "(#{ post.values.join(',') })" }.join(',') };"
+  def build_query(objects)
+    validate(objects)
+    "INSERT INTO #{ self.table } (#{ objects[0].keys.join(',') }) " \
+    "VALUES #{ objects.map { |object| "(#{ object.values.map { |val| "'#{val}'" }.join(',') })" }.join(',') };"
+  end
+
+  def validate(objects)
+    objects.map do |object|
+      object.each { |k, v| object[k] = v.to_s.gsub(/'/, "''") }
+    end
   end
 end
