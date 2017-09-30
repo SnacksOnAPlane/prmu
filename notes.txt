@@ -1,0 +1,30 @@
+Goal:
+One file for each town, filled with all comments
+One file for each town with 3 tabs, one water related, one power related, and one related to communication
+  keyswords: AEE/luz/power, AAA/agua/oasis, senal/comunicacion/recepcion
+
+Towns:
+  https://docs.google.com/spreadsheets/d/12ZdfzFcOjKMGU61jQdQkNp9OBDO1YytpY3YJckD_F3I/edit#gid=1673639140
+  1st column
+
+Postgresql DB
+Only need basic script on cron job. May eventually want a UI, but that seems like overkill for now
+
+Hosting: 
+  https://dashboard.heroku.com/apps/prmu
+
+FB Docs:
+  comments:   https://developers.facebook.com/docs/graph-api/reference/v2.10/object/comments
+  group feed: https://developers.facebook.com/docs/graph-api/reference/v2.10/group/feed
+  toolkit:    https://developers.facebook.com/tools/explorer/
+
+Drive Docs:
+  https://developers.google.com/drive/v3/web/manage-uploads
+
+access_token = "EAACEdEose0cBAJiJPd2ARt0Ee7XSBTDIs0LKAbHQIpWk5gkTz6zFZCJYZCFRjhyRRPaDH0kHOqWilZC56PZA2qADc2mMKdANX2ratMgX5gNHhZBUg8EYzGFX0hpckLvQwbifVwHzahWNgAcWMq4jekLrnygupFTC7W2HZBeld7qAft2StCqRCuZAMUuYz85Aac4y52L9FYNbQZDZD"
+
+#{post_id}/comments
+#{group_id}/feed
+
+# feed
+ "https://graph.facebook.com/v2.10/153188931945861/feed?icon_size=16&limit=25&until=1506736783&__paging_token=enc_AdDsf29W0kZAcZBGRMuVjmfuyismrZAnz2D7Jr31xdJT6CpQFC95ZBa1zdWgPwIrqVsANoK5lbINyV37WFI4t4ZCVDoIt9nlRbNZBtJLdy18UiDyVtcA2GuhsLSZBV35MuQeYdPIxK9jjoUEyxfMm2PcKjojxM9&access_token=EAACEdEose0cBAJiJPd2ARt0Ee7XSBTDIs0LKAbHQIpWk5gkTz6zFZCJYZCFRjhyRRPaDH0kHOqWilZC56PZA2qADc2mMKdANX2ratMgX5gNHhZBUg8EYzGFX0hpckLvQwbifVwHzahWNgAcWMq4jekLrnygupFTC7W2HZBeld7qAft2StCqRCuZAMUuYz85Aac4y52L9FYNbQZDZD"
