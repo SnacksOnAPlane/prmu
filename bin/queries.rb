@@ -8,7 +8,7 @@ class Query
   end
 
   def self.execute
-    conn = PG.connect( dbname: 'prmu' )
+    conn = PG.connect( dbname: 'prmu', user: 'prmu', password: 'prmu_pass' )
     conn.exec(self.query) do |result|
       puts result
     end
@@ -24,7 +24,7 @@ end
 
 class BulkInsert < Query
   def build_query(posts)
-    "INSERT INTO #{ self.table } (#{ posts[0].keys.join(',') })" \
+    "INSERT INTO #{ self.table } (#{ posts[0].keys.join(',') }) " \
     "VALUES #{ posts.map { |post| "(#{ post.values.join(',') })" }.join(',') };"
   end
 end
