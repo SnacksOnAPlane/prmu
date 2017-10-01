@@ -10,7 +10,7 @@ class Query
   end
 
   def execute
-    conn = PG.connect( dbname: 'prmu', user: 'prmu', password: 'prmu_pass' )
+    conn = PG.connect( dbname: 'prmu', user: 'prmu_user', password: 'prmu_pass' )
     conn.exec(self.query) do |result|
       puts result
     end
