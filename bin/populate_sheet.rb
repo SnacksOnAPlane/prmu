@@ -77,7 +77,7 @@ def create_city_id_to_sheet_id_mapping
 end
 
 def posts_for_city(city_id)
-  @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ?", [ city_id ]) { |row| yield row }
+   @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? ORDER BY updated_time DESC", [ city_id ]) { |row| yield row }
 end
 
 city_id_to_sheet_id_mapping = create_city_id_to_sheet_id_mapping
@@ -87,7 +87,9 @@ city_id_to_sheet_id_mapping.keys.each do |city_id|
   posts_for_city(city_id) do |message, id, updated_time|
     group_id, post_id = id.split("_")
     link = "https://www.facebook.com/groups/prmariaupdates/permalink/#{post_id}/"
-    requests.push(append_cells_request(sheet_id, [message, link, updated_time]))
+    if message.downcase.match(/aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion/)
+      requests.push(append_cells_request(sheet_id, [message, link, updated_time]))
+    end
   end
 end
 
