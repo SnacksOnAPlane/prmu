@@ -34,7 +34,7 @@ each_post do |message, post_id|
   i += 1
   puts "post #{i}"
   cities.each do |city_name, city_id|
-    if message && message.downcase.include?(city_name)
+    if message && message.downcase.include?(city_name.downcase)
       associate_post(post_id, city_id)
     end
   end
