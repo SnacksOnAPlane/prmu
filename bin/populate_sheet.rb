@@ -39,15 +39,18 @@ def update_sheet_properties
   }
 end
 
-def append_cells_request(sheet_id, row)
-  values = row.map do |c|
-    { user_entered_value: { string_value: c } }
+def append_cells_request(sheet_id, rows)
+  rows = rows.map do |row|
+    values = row.map do |c|
+      { user_entered_value: { string_value: c } }
+    end
+    { values: values }
   end
 
   {
     append_cells: {
       sheet_id: sheet_id,
-      rows: [{ values: values }],
+      rows: rows,
       fields: "*"
     }
   }
@@ -87,8 +90,12 @@ city_id_to_sheet_id_mapping.keys.each do |city_id|
   posts_for_city(city_id) do |message, id, updated_time|
     group_id, post_id = id.split("_")
     link = "https://www.facebook.com/groups/prmariaupdates/permalink/#{post_id}/"
+    rows = []
     if message.downcase.match(/aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion/)
-      requests.push(append_cells_request(sheet_id, [message, link, updated_time]))
+      rows.push([message, link, updated_time])
+    end
+    rows.each_slice(50) do |slice|
+      requests.push(append_cells_request(sheet_id, slice)) if slice
     end
   end
 end
@@ -99,5 +106,5 @@ requests.each_slice(50) do |slice|
   puts len
   len -= 50
   data = { requests: slice }
-  @service.batch_update_spreadsheet(SS_ID, data, {})
+  #@service.batch_update_spreadsheet(SS_ID, data, {})
 end
