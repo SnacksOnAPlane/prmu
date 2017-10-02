@@ -87,16 +87,16 @@ city_id_to_sheet_id_mapping = create_city_id_to_sheet_id_mapping
 
 city_id_to_sheet_id_mapping.keys.each do |city_id|
   sheet_id = city_id_to_sheet_id_mapping[city_id]
+  rows = []
   posts_for_city(city_id) do |message, id, updated_time|
     group_id, post_id = id.split("_")
     link = "https://www.facebook.com/groups/prmariaupdates/permalink/#{post_id}/"
-    rows = []
     if message.downcase.match(/aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion/)
       rows.push([message, link, updated_time])
     end
-    rows.each_slice(50) do |slice|
-      requests.push(append_cells_request(sheet_id, slice)) if slice
-    end
+  end
+  rows.each_slice(500) do |slice|
+    requests.push(append_cells_request(sheet_id, slice)) if slice
   end
 end
 
