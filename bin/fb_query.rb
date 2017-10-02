@@ -10,7 +10,7 @@ require_relative "../creds.rb"
 def get_newest_post_time
   last_time = nil
   @db.execute("SELECT * FROM posts ORDER BY updated_time desc LIMIT 1") do |row|
-    binding.pry
+    last_time = DateTime.parse(row[2])
   end
   last_time
 end
@@ -22,12 +22,21 @@ end
 
 def get_posts_since(post_time)
   # TODO: add 'since' parameter for post_time
-  data = @graph.get_object("153188931945861/feed")
-  data.each { |p| yield p }
+  data = @graph.get_object("153188931945861/feed", since: post_time, limit: 100)
+  while data.length
+    puts "inserting #{data.length} records (#{data.first['updated_time']} - #{data.last['updated_time']})"
+    data.each { |p| yield p }
+    data = data.next_page
+  end
 end
 
 get_posts_since(get_newest_post_time) do |post|
-  insert_into_db(post)
+  begin
+    insert_into_db(post)
+  rescue SQLite3::ConstraintException
+    puts "hit dupe; finishing"
+    break
+  end
 end
 
 # stick the data into the SQLite db
