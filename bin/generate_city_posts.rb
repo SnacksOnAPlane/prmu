@@ -28,7 +28,7 @@ def associate_post(post_id, city_id)
   @db.execute("INSERT INTO city_posts (city_id, post_id) VALUES (?,?)", [city_id, post_id])
 end
 
-var i = 0
+i = 0
 cities = get_cities
 each_post do |message, post_id|
   i += 1
