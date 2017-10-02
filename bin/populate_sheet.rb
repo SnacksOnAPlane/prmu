@@ -8,10 +8,11 @@ require_relative '../cities'
 SS_ID = "1pcBR6InPnOYhzC-EdEJv0c4FySZajSDZt5DeUDhGzhc"
 SCOPE = "https://www.googleapis.com/auth/spreadsheets"
 INITIAL_POPULATE = false
+GCREDS = File.join(File.dirname(__FILE__), '../gcreds.json')
 
 @service = Google::Apis::SheetsV4::SheetsService.new
 @service.client_options.application_name = 'PRMU'
-@service.authorization = Google::Auth::ServiceAccountCredentials.make_creds(json_key_io: File.open('/home/smiley/code/prmu/gcreds.json'), scope: SCOPE)
+@service.authorization = Google::Auth::ServiceAccountCredentials.make_creds(json_key_io: File.open(GCREDS), scope: SCOPE)
 
 @sheet = @service.get_spreadsheet(SS_ID)
 
@@ -90,10 +91,11 @@ city_id_to_sheet_id_mapping.keys.each do |city_id|
   end
 end
 
-puts requests
+len = requests.length
 
-data = {
-  requests: requests
-}
-
-@service.batch_update_spreadsheet(SS_ID, data, {})
+requests.each_slice(50) do |slice|
+  puts len
+  len -= 50
+  data = { requests: slice }
+  @service.batch_update_spreadsheet(SS_ID, data, {})
+end
