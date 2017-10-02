@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
-gem 'pg'
 gem 'rspec'
 gem 'rake'
+gem 'koala'
+gem 'pry'
