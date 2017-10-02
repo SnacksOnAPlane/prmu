@@ -106,5 +106,5 @@ requests.each_slice(50) do |slice|
   puts len
   len -= 50
   data = { requests: slice }
-  #@service.batch_update_spreadsheet(SS_ID, data, {})
+  @service.batch_update_spreadsheet(SS_ID, data, {})
 end
