@@ -56,8 +56,6 @@ def append_cells_request(sheet_id, rows)
   }
 end
 
-requests = []
-
 if INITIAL_POPULATE
   CITIES.split("\n").each do |city|
     requests.push(add_sheet_request(city))
@@ -79,32 +77,35 @@ def create_city_id_to_sheet_id_mapping
   mapping
 end
 
-def posts_for_city(city_id)
-   @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? ORDER BY updated_time DESC", [ city_id ]) { |row| yield row }
+def posts_for_city(city_id, date)
+   @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? AND updated_time > date(?)", [ city_id, date.to_s ]) { |row| yield row }
 end
 
-city_id_to_sheet_id_mapping = create_city_id_to_sheet_id_mapping
+def populate_sheet_since(date)
+  requests = []
+  city_id_to_sheet_id_mapping = create_city_id_to_sheet_id_mapping
 
-city_id_to_sheet_id_mapping.keys.each do |city_id|
-  sheet_id = city_id_to_sheet_id_mapping[city_id]
-  rows = []
-  posts_for_city(city_id) do |message, id, updated_time|
-    group_id, post_id = id.split("_")
-    link = "https://www.facebook.com/groups/prmariaupdates/permalink/#{post_id}/"
-    if message.downcase.match(/aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion/)
-      rows.push([message, link, updated_time])
+  city_id_to_sheet_id_mapping.keys.each do |city_id|
+    sheet_id = city_id_to_sheet_id_mapping[city_id]
+    rows = []
+    posts_for_city(city_id, date) do |message, id, updated_time|
+      group_id, post_id = id.split("_")
+      link = "https://www.facebook.com/groups/prmariaupdates/permalink/#{post_id}/"
+      if message.downcase.match(/aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion/)
+        rows.push([message, link, updated_time])
+      end
+    end
+    rows.each_slice(500) do |slice|
+      requests.push(append_cells_request(sheet_id, slice)) if slice
     end
   end
-  rows.each_slice(500) do |slice|
-    requests.push(append_cells_request(sheet_id, slice)) if slice
+
+  len = requests.length
+
+  requests.each_slice(50) do |slice|
+    puts len
+    len -= 50
+    data = { requests: slice }
+    @service.batch_update_spreadsheet(SS_ID, data, {})
   end
-end
-
-len = requests.length
-
-requests.each_slice(50) do |slice|
-  puts len
-  len -= 50
-  data = { requests: slice }
-  @service.batch_update_spreadsheet(SS_ID, data, {})
 end

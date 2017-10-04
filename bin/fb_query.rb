@@ -2,6 +2,7 @@ require 'koala'
 require 'pry'
 require 'sqlite3'
 require 'digest'
+require_relative './populate_sheet'
 require_relative "../creds.rb"
 
 @db = SQLite3::Database.new "prmu.db"
@@ -56,11 +57,13 @@ def associate_with_cities(post)
   end
 end
 
-get_posts_since(get_newest_post_time) do |post|
+newest_post_time = get_newest_post_time
+get_posts_since(newest_post_time) do |post|
   begin
     insert_into_db(post)
     associate_with_cities(post)
   rescue SQLite3::ConstraintException
-    puts "hit dupe; skipping"
+    puts "skipping comment"
   end
 end
+populate_sheet_since(newest_post_time)
