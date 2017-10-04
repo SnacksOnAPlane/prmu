@@ -1,6 +1,7 @@
 require 'koala'
 require 'pry'
 require 'sqlite3'
+require 'digest'
 require_relative "../creds.rb"
 
 @db = SQLite3::Database.new "prmu.db"
@@ -16,8 +17,8 @@ def get_newest_post_time
 end
 
 def insert_into_db(post)
-  @db.execute("INSERT INTO posts (message, id, updated_time) VALUES (?, ?, ?)",
-              [ post['message'], post['id'], post['updated_time'] ])
+  @db.execute("INSERT INTO posts (message, id, updated_time, message_hash) VALUES (?, ?, ?, ?)",
+              [ post['message'], post['id'], post['updated_time'], Digest::MD5.hexdigest(post['message']) ])
 end
 
 def get_posts_since(post_time)
@@ -38,7 +39,3 @@ get_posts_since(get_newest_post_time) do |post|
     break
   end
 end
-
-# stick the data into the SQLite db
-
-binding.pry
