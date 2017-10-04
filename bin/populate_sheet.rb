@@ -3,7 +3,9 @@ require 'googleauth'
 require 'googleauth/stores/file_token_store'
 require 'pry'
 require 'sqlite3'
+require 'i18n'
 require_relative '../cities'
+I18n.available_locales = [:en]
 
 SS_ID = "1pcBR6InPnOYhzC-EdEJv0c4FySZajSDZt5DeUDhGzhc"
 SCOPE = "https://www.googleapis.com/auth/spreadsheets"
