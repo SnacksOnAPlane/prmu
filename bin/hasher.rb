@@ -16,7 +16,13 @@ ids_to_md5s = {}
 	ids_to_md5s[id] = md5
 end
 
+total = ids_to_md5s.keys.length
+
+i = 0
+
 ids_to_md5s.keys.each do |id|
+	i += 1
+	puts "#{i}/#{total}" if i % 100 == 0
 	md5 = ids_to_md5s[id]
 	@db.execute("UPDATE posts SET message_hash = ? WHERE id = ?", [md5, id])
 end
