@@ -109,3 +109,7 @@ def populate_sheet_since(date)
     @service.batch_update_spreadsheet(SS_ID, data, {})
   end
 end
+
+if __FILE__ == $0
+  populate_sheet_since(Date.new(2017,1,1))
+end
