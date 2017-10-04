@@ -91,7 +91,7 @@ def populate_sheet_since(date)
     posts_for_city(city_id, date) do |message, id, updated_time|
       group_id, post_id = id.split("_")
       link = "https://www.facebook.com/groups/prmariaupdates/permalink/#{post_id}/"
-      if message.downcase.match(/aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion/)
+      if message.downcase.match(/[^a-z](aee|luz|power|aaa|agua|oasis|senal|comunicacion|recepcion)[^a-z]/)
         rows.push([message, link, updated_time])
       end
     end
