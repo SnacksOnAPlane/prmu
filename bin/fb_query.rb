@@ -35,7 +35,6 @@ get_posts_since(get_newest_post_time) do |post|
   begin
     insert_into_db(post)
   rescue SQLite3::ConstraintException
-    puts "hit dupe; finishing"
-    break
+    puts "hit dupe; skipping"
   end
 end
