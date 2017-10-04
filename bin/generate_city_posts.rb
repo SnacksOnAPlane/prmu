@@ -21,7 +21,7 @@ def get_cities
 end
 
 def each_post
-  @db.execute("SELECT message, id FROM posts") { |p| yield p }
+  @db.execute("SELECT message, id FROM posts ORDER BY updated_time DESC") { |p| yield p }
 end
 
 def associate_post(post_id, city_id)
