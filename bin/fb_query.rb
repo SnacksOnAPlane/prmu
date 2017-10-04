@@ -2,8 +2,10 @@ require 'koala'
 require 'pry'
 require 'sqlite3'
 require 'digest'
+require 'i18n'
 require_relative './populate_sheet'
 require_relative "../creds.rb"
+I18n.available_locales = [:en]
 
 @db = SQLite3::Database.new "prmu.db"
 @graph = Koala::Facebook::API.new(FB_API_KEY)
@@ -51,7 +53,8 @@ end
 
 def associate_with_cities(post)
   @cities.each do |city_name, city_id|
-    if post['message'] && post['message'].downcase.include?(city_name.downcase)
+    city_name = I18n.transliterate(city_name.downcase)
+    if post['message'] && I18n.transliterate(post['message'].downcase).include?(city_name)
       associate_post(post['id'], city_id)
     end
   end

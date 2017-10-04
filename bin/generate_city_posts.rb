@@ -1,4 +1,7 @@
 require 'sqlite3'
+require 'i18n'
+
+I18n.available_locales = [:en]
 
 CREATE = false
 
@@ -34,7 +37,8 @@ each_post do |message, post_id|
   i += 1
   puts "post #{i}"
   cities.each do |city_name, city_id|
-    if message && message.downcase.include?(city_name.downcase)
+    city_name = I18n.transliterate(city_name.downcase)
+    if message && I18n.transliterate(message.downcase).include?(city_name)
       associate_post(post_id, city_id)
     end
   end

@@ -25,6 +25,7 @@ GEM
       os (~> 0.9)
       signet (~> 0.7)
     httpclient (2.8.3)
+    i18n (0.8.5)
     json (2.1.0)
     jwt (1.5.6)
     koala (3.0.0)
@@ -79,6 +80,7 @@ PLATFORMS
 
 DEPENDENCIES
   google-api-client
+  i18n
   koala
   pry
   rake
