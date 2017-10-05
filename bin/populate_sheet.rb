@@ -80,7 +80,11 @@ def create_city_id_to_sheet_id_mapping
 end
 
 def posts_for_city(city_id, date)
-   @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? AND city_posts.published IS NULL AND updated_time > date(?)", [ city_id, date.to_s ]) { |row| yield row }
+   sql = <<-SQL
+SELECT message, id, updated_time FROM posts INNER JOIN (
+  SELECT message_hash, MAX(updated_time) AS u_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? AND city_posts.published IS NULL AND updated_time > date(?) GROUP BY message_hash) b ON posts.message_hash = b.message_hash AND posts.updated_time = b.u_time
+  SQL
+  @db.execute(sql, [ city_id, date.to_s ]) { |row| yield row }
 end
 
 def populate_sheet_since(date)
@@ -110,7 +114,7 @@ def populate_sheet_since(date)
     data = { requests: slice }
     @service.batch_update_spreadsheet(SS_ID, data, {})
   end
- 
+
   @db.execute("UPDATE city_posts SET published = 1;")
 end
 
