@@ -80,7 +80,7 @@ def create_city_id_to_sheet_id_mapping
 end
 
 def posts_for_city(city_id, date)
-   @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? AND city_posts.published != 1 AND updated_time > date(?)", [ city_id, date.to_s ]) { |row| yield row }
+   @db.execute("SELECT message, id, updated_time FROM posts JOIN city_posts ON city_posts.post_id = posts.id WHERE city_posts.city_id = ? AND city_posts.published IS NOT NULL AND updated_time > date(?)", [ city_id, date.to_s ]) { |row| yield row }
 end
 
 def populate_sheet_since(date)
